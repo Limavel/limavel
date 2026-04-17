@@ -1,0 +1,64 @@
+# Instance name (used as Lima VM identifier)
+name: limavel
+
+# VM Resources
+memory: 2048
+cpus: 2
+disk: 50
+
+# OS image and architecture
+# Note: It cannot be changed after vm creation
+image: "https://cloud.debian.org/images/cloud/trixie/daily/latest/debian-13-genericcloud-arm64-daily.qcow2"
+arch: aarch64
+
+# Alternative provision scripts (use limavel publish command for publish them)
+# Set alternative provision scripts
+# bootstrap: ./provision/bootstrap/main.sh
+# playbooks: ./provision/ansible
+
+# SSH keys
+authorize: ~/.ssh/id_rsa.pub
+keys:
+  - ~/.ssh/id_rsa
+
+# Shared folders (host → guest)
+folders:
+  - map: ~/myproject                   # The project folder located in the host machine
+    to: /home/limavel/myproject        # The project folder located in the guest machine (It should be always located under /home/limavel)
+
+# Nginx sites
+sites:
+  - map: limavel.test
+    to: /home/limavel/myproject/code/public # The project folder for serve by Nginx located in the guest machine
+    php: "8.3"
+
+# Databases to create on provision
+databases:
+  - limavel
+
+# Database engine (mariadb, mysql or postgresql)
+database:
+  type: mariadb
+  version: "11.4"
+  password: secret
+
+# Node.js major version
+nodejs: "24"
+
+# Optional software
+features:
+  ohmyzsh: true
+  webdriver: false
+  mailpit: false
+  mongodb: false
+  valkey: true
+  # Custom features (any YAML value) available to custom playbooks:
+  # my_flag: true
+  # worker_count: 4
+
+# Port forwarding (host ← guest)
+ports:
+  - send: 33060 # MariaDB/MySQL port
+    to: 3306
+  - send: 8025  # Mailpit SMTP port
+    to: 8025
