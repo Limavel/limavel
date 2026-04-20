@@ -85,6 +85,9 @@ fn default_nodejs() -> String {
 impl LimavelConfig {
     /// Returns the config file path for a given instance name: `{name}.yaml`
     pub fn config_path(name: &str) -> PathBuf {
+        if name.ends_with(".yaml") || name.ends_with(".yml") {
+            return PathBuf::from(name);
+        }
         PathBuf::from(format!("{}.yaml", name))
     }
 
