@@ -50,13 +50,14 @@ With the ```limavel ssh``` command you can access the virtual machine using SSH.
 
 ## Commands list
 
-| Command                 | Description                                    |
-|-------------------------|------------------------------------------------|
-| ```init```      | Initialize the configuration file              |
-| ```edit```      | Edit the configuration file                    |
-| ```provision``` | Run the provisioning process                   |
-| ```publish```   | Publish the OS bootstrap and Ansible playbooks |
-| ```start```     | Start the virtual machine                      |
-| ```stop```      | Stop the virtual machine                       |
-| ```status```    | Check the status of the virtual machine        |
-| ```ssh```       | Access the virtual machine using SSH           |
+| Command           | Description                                    |
+|-------------------|------------------------------------------------|
+| ```init```        | Initialize the configuration file              |
+| ```edit```        | Edit the configuration file                    |
+| ```provision```   | Run the provisioning process                   |
+| ```publish```     | Publish the OS bootstrap and Ansible playbooks |
+| ```start```       | Start the virtual machine                      |
+| ```stop```        | Stop the virtual machine                       |
+| ```status```      | Check the status of the virtual machine        |
+| ```ssh```         | Access the virtual machine using SSH           |
+| ```ssh-details``` | Show the SSH connection instructions           |

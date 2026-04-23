@@ -60,6 +60,12 @@ pub enum Commands {
         #[arg(default_value = "limavel")]
         name: String,
     },
+    /// Show SSH connection details for the VM
+    SshDetails {
+        /// Instance name (reads <name>.yaml, defaults to "limavel")
+        #[arg(default_value = "limavel")]
+        name: String,
+    },
     /// Show the VM instance status
     Status {
         /// Instance name (reads <name>.yaml, defaults to "limavel")
