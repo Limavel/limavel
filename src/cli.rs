@@ -43,7 +43,7 @@ pub enum Commands {
         no_hosts: bool,
     },
     /// Restart the development VM
-    Reboot {
+    Restart {
         /// Instance name (reads <name>.yaml, defaults to "limavel")
         #[arg(default_value = "limavel")]
         name: String,

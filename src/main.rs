@@ -18,7 +18,7 @@ fn main() {
         Commands::Init { name } => commands::init::execute(&name),
         Commands::Start { name, no_hosts } => commands::start::execute(&name, no_hosts),
         Commands::Stop { name, no_hosts } => commands::stop::execute(&name, no_hosts),
-        Commands::Reboot { name } => commands::reboot::execute(&name),
+        Commands::Restart { name } => commands::restart::execute(&name),
         Commands::Provision { name } => commands::provision::execute(&name),
         Commands::Ssh { name } => commands::ssh::execute(&name),
         Commands::SshDetails { name } => commands::ssh::details(&name),

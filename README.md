@@ -58,6 +58,7 @@ With the ```limavel ssh``` command you can access the virtual machine using SSH.
 | ```publish```     | Publish the OS bootstrap and Ansible playbooks |
 | ```start```       | Start the virtual machine                      |
 | ```stop```        | Stop the virtual machine                       |
+| ```restart```     | Restart the virtual machine                    |
 | ```status```      | Check the status of the virtual machine        |
 | ```ssh```         | Access the virtual machine using SSH           |
 | ```ssh-details``` | Show the SSH connection instructions           |
