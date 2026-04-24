@@ -10,6 +10,7 @@ use super::playbooks;
 
 #[derive(Serialize)]
 struct AnsibleVars {
+    instance: String,
     ssh_public_key: String,
     sites: Vec<AnsibleSite>,
     php_versions: Vec<String>,
@@ -44,6 +45,7 @@ pub fn provision(name: &str, config: &LimavelConfig) -> Result<()> {
         .context("Failed to read SSH public key")?;
 
     let vars = AnsibleVars {
+        instance: config.name.clone(),
         ssh_public_key: ssh_pubkey,
         sites: config
             .sites
