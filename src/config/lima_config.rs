@@ -20,6 +20,7 @@ pub struct LimaConfig {
     pub ssh: LimaSsh,
     pub containerd: LimaContainerd,
     pub provision: Vec<LimaProvision>,
+    pub rosetta: bool,
 }
 
 #[derive(Debug, Serialize)]
@@ -129,6 +130,7 @@ impl LimaConfig {
                 mode: "system".to_string(),
                 script: bootstrap_script,
             }],
+            rosetta: config.arch != "aarch64",
         })
     }
 
