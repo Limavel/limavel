@@ -1,8 +1,5 @@
 # Limavel 🍋‍🟩
 
-> [!WARNING]  
-> This project is in early development. Use at your own risk.
-
 A Laravel Homestead replacement for macOS.
 
 
@@ -15,7 +12,7 @@ Laravel offers a great development environment based on containers for macOS wit
 
 Limavel uses [Lima](https://lima-vm.io/) with the native [Apple Virtualization Framework](https://developer.apple.com/documentation/virtualization) and [Ansible](https://ansible.com) under the hood. It helps to create, edit, and provision virtual machines in macOS that are oriented to web development and especially to Laravel app development.
 
-In order to use Limavel you need to previously install [Lima 2.x](https://formulae.brew.sh/formula/lima).
+In order to use Limavel, you need to previously install [Lima 2.x](https://formulae.brew.sh/formula/lima).
 
 ### Getting started
 
@@ -33,14 +30,15 @@ You can run ```limavel provision``` for applying changes to the virtual machine 
 
 The provisioning process is based on Ansible playbooks.
 
-
-### Playbooks customization
+### Provision customization
 
 Limavel was developed for using Debian Trixie as a base; however, it's possible to customize the bootstrap scripts and playbooks to use other distributions.
 
 To publish the OS bootstrap and Ansible playbook files in your filesystem, you can run ```limavel publish```. Feel free to modify these files for custom needs.
 
-In the future I am planning to create a custom git repository for storing the playbook customizations from users.
+See the following provisions:
+- [Debian Trixie](https://github.com/Limavel/provision-debian-13-4) (Default used by Limavel)
+- [Ubuntu Server Noble](https://github.com/Limavel/provision-ubuntu-24-04)
 
 
 ### SSH Access
