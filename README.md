@@ -1,12 +1,25 @@
 # Limavel 🍋‍🟩
 
-A Laravel Homestead replacement for macOS.
+A tool for creating and provisioning virtualized environments for Laravel development on macOS.
 
+
+This tool may serve also as [Laravel Homestead](https://laravel.com/docs/13.x/homestead) replacement.
 
 ## Motivation
 
-Laravel offers a great development environment based on containers for macOS with [Laravel Herd](https://herd.laravel.com/); however, some developers require a development environment that must be close to the production one, or simply need extra customization and security. Limavel offers the possibility of using virtualized development environments like [Laravel Homestead](https://laravel.com/docs/13.x/homestead) but without using Vagrant and Parallels Desktop.
+Laravel offers a great development environment based on containers for macOS with [Laravel Herd](https://herd.laravel.com/); however, some developers require a development environment that must be close to the production one, or simply need extra customization and security. Limavel offers the possibility of using virtualized development environments like [Laravel Homestead](https://laravel.com/docs/13.x/homestead) but without using Vagrant and commercial virtualization software.
 
+## Installation
+
+```bash
+curl -o- https://raw.githubusercontent.com/Limavel/installer/refs/heads/master/install.sh | bash
+```
+
+or using cargo:
+
+```bash
+cargo install limavel
+```
 
 ## How it works
 
@@ -39,6 +52,8 @@ To publish the OS bootstrap and Ansible playbook files in your filesystem, you c
 See the following provisions:
 - [Debian Trixie](https://github.com/Limavel/provision-debian-13-4) (Default used by Limavel)
 - [Ubuntu Server Noble](https://github.com/Limavel/provision-ubuntu-24-04)
+
+The provisions located into the limavel project are oriented to Laravel development; however, you are free to create your own provisions for different purposes or/and development stacks.
 
 
 ### SSH Access
