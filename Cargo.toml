@@ -1,6 +1,6 @@
 [package]
 name = "limavel"
-description = "A Laravel virtualized environment for macOS"
+description = "A tool for creating virtualized development environments for Laravel in macOS"
 keywords = ["laravel", "vm", "virtualized", "development", "macOS"]
 categories = ["command-line-utilities"]
 version = "0.9.3"
