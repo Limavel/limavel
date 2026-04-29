@@ -33,8 +33,7 @@ fn ensure_ansible_installed(name: &str) -> Result<()> {
     let check = LimaClient::shell(name, "which ansible-playbook");
     if check.is_err() {
         println!("Ansible not found in guest, installing...");
-        LimaClient::shell(name, "sudo apt-get update -qq && sudo apt-get install -y -qq ansible")
-            .context("Failed to install ansible in guest")?;
+        return Err(anyhow::anyhow!("Ansible not found in guest"));
     }
     Ok(())
 }
