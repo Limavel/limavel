@@ -95,6 +95,6 @@ Limavel will take care of the virtual machine management, provisioning, and host
                                 ┌─────────────────┐              │    │                      │
                                 │                 │              │    │                      │
                                 │     Lima-vm     │──────────────┘    └──────────────────────┘
-                                │                 │                                                
-                                └─────────────────┘                                                
+                                │                 │ 
+                                └─────────────────┘                                           
 ```
