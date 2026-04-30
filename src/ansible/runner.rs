@@ -32,7 +32,7 @@ struct AnsibleSite {
 fn ensure_ansible_installed(name: &str) -> Result<()> {
     let check = LimaClient::shell(name, "which ansible-playbook");
     if check.is_err() {
-        println!("Ansible not found in guest, installing...");
+        println!("Ansible not found in guest");
         return Err(anyhow::anyhow!("Ansible not found in guest"));
     }
     Ok(())

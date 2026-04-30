@@ -52,6 +52,7 @@ features:
   mailpit: false
   mongodb: false
   valkey: true
+  meilisearch: false
   # Custom features (any YAML value) available to custom playbooks:
   # my_flag: true
   # worker_count: 4

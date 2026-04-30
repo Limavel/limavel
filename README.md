@@ -75,3 +75,26 @@ With the ```limavel ssh``` command you can access the virtual machine using SSH.
 | ```status```      | Check the status of the virtual machine        |
 | ```ssh```         | Access the virtual machine using SSH           |
 | ```ssh-details``` | Show the SSH connection instructions           |
+
+
+## Management architecture
+
+Limavel will take care of the virtual machine management, provisioning, and hosts configuration.
+
+```
+┌───────────────┐     Hosts     ┌─────────────────┐    Provision                                   
+│               │   management  │                 │    management                                  
+│  /etc/hosts   │◀──────────────│     Limavel     │◀──────────────┐    ┌──────────────────────────┐
+│               │               │                 │               │    │         Guest VM         │
+└───────────────┘               └─────────────────┘               │    │                          │
+                                         │                        │    │  ┌─────────────────────┐ │
+                                   VM management                  └────┼─▶│       Ansible       │ │
+                                         │                        ┌───▶│  └─────────────────────┘ │
+                                         │                        │    │                          │
+                                         ▼                        │    │                          │
+                                ┌─────────────────┐               │    │                          │
+                                │                 │               │    │                          │
+                                │     Lima-vm     │───────────────┘    └──────────────────────────┘
+                                │                 │                                                
+                                └─────────────────┘                                                
+```

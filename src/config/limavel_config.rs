@@ -64,6 +64,8 @@ pub struct Features {
     pub mongodb: bool,
     #[serde(default)]
     pub valkey: bool,
+    #[serde(default)]
+    pub meilisearch: bool,
     #[serde(flatten, default)]
     pub extra: HashMap<String, serde_yml::Value>,
 }
