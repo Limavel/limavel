@@ -82,19 +82,19 @@ With the ```limavel ssh``` command you can access the virtual machine using SSH.
 Limavel will take care of the virtual machine management, provisioning, and hosts configuration.
 
 ```
-┌───────────────┐     Hosts     ┌─────────────────┐    Provision                                   
-│               │   management  │                 │    management                                  
-│  /etc/hosts   │◀──────────────│     Limavel     │◀──────────────┐    ┌──────────────────────────┐
-│               │               │                 │               │    │         Guest VM         │
-└───────────────┘               └─────────────────┘               │    │                          │
-                                         │                        │    │  ┌─────────────────────┐ │
-                                   VM management                  └────┼─▶│       Ansible       │ │
-                                         │                        ┌───▶│  └─────────────────────┘ │
-                                         │                        │    │                          │
-                                         ▼                        │    │                          │
-                                ┌─────────────────┐               │    │                          │
-                                │                 │               │    │                          │
-                                │     Lima-vm     │───────────────┘    └──────────────────────────┘
+┌───────────────┐     Hosts     ┌─────────────────┐  Provision                                   
+│               │   management  │                 │  management                                  
+│  /etc/hosts   │◀──────────────│     Limavel     │◀─────────────┐    ┌──────────────────────┐
+│               │               │                 │              │    │       Guest VM       │
+└───────────────┘               └─────────────────┘              │    │                      │
+                                         │                       │    │  ┌─────────────────┐ │
+                                   VM management                 └────┼─▶│     Ansible     │ │
+                                         │                       ┌───▶│  └─────────────────┘ │
+                                         │                       │    │                      │
+                                         ▼                       │    │                      │
+                                ┌─────────────────┐              │    │                      │
+                                │                 │              │    │                      │
+                                │     Lima-vm     │──────────────┘    └──────────────────────┘
                                 │                 │                                                
                                 └─────────────────┘                                                
 ```
