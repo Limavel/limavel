@@ -83,7 +83,7 @@ Limavel will take care of the virtual machine management, provisioning, and host
 
 ```
 ┌───────────────┐     Hosts     ┌─────────────────┐  Provision                                   
-│               │   management  │                 │  management                                  
+│               │   management  │                 │  management
 │  /etc/hosts   │◀──────────────│     Limavel     │◀─────────────┐    ┌──────────────────────┐
 │               │               │                 │              │    │       Guest VM       │
 └───────────────┘               └─────────────────┘              │    │                      │
