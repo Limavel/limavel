@@ -1,6 +1,7 @@
 use anyhow::Result;
 use colored::Colorize;
 
+use crate::config::lima_config::LimaConfig;
 use crate::config::limavel_config::LimavelConfig;
 use crate::error::LimavelError;
 use crate::lima::client::LimaClient;
@@ -8,6 +9,7 @@ use crate::lima::client::LimaClient;
 pub fn execute(name: &str) -> Result<()> {
     LimaClient::check_installed()?;
     let config = LimavelConfig::load(name)?;
+    config.validate_folders()?;
     let instance = config.instance_name();
 
     if !LimaClient::instance_exists(instance)? {
@@ -20,17 +22,13 @@ pub fn execute(name: &str) -> Result<()> {
         LimaClient::stop(instance)?;
     }
 
-    let current_disk_gib = LimaClient::instance_disk_gib(instance)?;
-    let new_disk = if config.disk > current_disk_gib {
-        Some(config.disk)
-    } else {
-        None
-    };
+    let ssh_pubkey = config.read_ssh_pubkey()?;
+    let lima_config = LimaConfig::from_config(&config, &ssh_pubkey)?;
+    let yaml = lima_config.to_yaml()?;
 
-    println!("{} Applying resource changes (cpus: {}, memory: {}MiB, disk: {}GiB)...",
-        "→".cyan(), config.cpus, config.memory, config.disk);
-    LimaClient::edit(instance, config.cpus, config.memory, new_disk)?;
-    println!("{} Resource changes applied.", "✓".green());
+    println!("{} Applying changes...", "→".cyan());
+    LimaClient::edit(instance, &yaml)?;
+    println!("{} Changes applied.", "✓".green());
 
     if was_running {
         println!("{} Starting VM '{}'...", "→".cyan(), instance);

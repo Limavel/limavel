@@ -1,13 +1,13 @@
 use anyhow::Result;
 use colored::Colorize;
-use tempfile::NamedTempFile;
 use std::io::Write;
+use tempfile::NamedTempFile;
 
-use crate::config::limavel_config::LimavelConfig;
+use crate::ansible::runner;
 use crate::config::lima_config::LimaConfig;
+use crate::config::limavel_config::LimavelConfig;
 use crate::hosts;
 use crate::lima::client::LimaClient;
-use crate::ansible::runner;
 
 fn apply_resource_changes(instance: &str, config: &LimavelConfig) -> Result<()> {
     let current_cpus = LimaClient::instance_cpus(instance)?;
@@ -31,8 +31,10 @@ fn apply_resource_changes(instance: &str, config: &LimavelConfig) -> Result<()> 
         }
         println!("{} Applying resource changes: {}", "→".cyan(), changes.join(", "));
 
-        let new_disk = if disk_changed { Some(config.disk) } else { None };
-        LimaClient::edit(instance, config.cpus, config.memory, new_disk)?;
+        let ssh_pubkey = config.read_ssh_pubkey()?;
+        let lima_config = LimaConfig::from_config(config, &ssh_pubkey)?;
+        let yaml = lima_config.to_yaml()?;
+        LimaClient::edit(instance, &yaml)?;
 
         println!("{} Resource changes applied.", "✓".green());
     }

@@ -55,6 +55,10 @@ See the following provisions:
 
 The provisions located into the limavel project are oriented to Laravel development; however, you are free to create your own provisions for different purposes or/and development stacks.
 
+### Virtual Machine Configuration
+
+Edit the ```limavel.yaml``` file to customize the virtual machine configuration such as memory, CPU, and file mapping, and run ```limavel edit``` to apply the changes.
+
 
 ### SSH Access
 
@@ -66,7 +70,7 @@ With the ```limavel ssh``` command you can access the virtual machine using SSH.
 | Command           | Description                                    |
 |-------------------|------------------------------------------------|
 | ```init```        | Initialize the configuration file              |
-| ```edit```        | Edit the configuration file                    |
+| ```edit```        | Change virtual machine configuration           |
 | ```provision```   | Run the provisioning process                   |
 | ```publish```     | Publish the OS bootstrap and Ansible playbooks |
 | ```start```       | Start the virtual machine                      |

@@ -123,29 +123,23 @@ impl LimaClient {
             .ok_or_else(|| anyhow::anyhow!("Could not determine disk size for instance '{}'", name))
     }
 
-    pub fn edit(name: &str, cpus: u32, memory_mib: u32, disk_gib: Option<u32>) -> Result<()> {
-        let mut args = vec![
-            "edit".to_string(),
-            name.to_string(),
-            format!("--cpus={}", cpus),
-            format!("--memory={}MiB", memory_mib),
-        ];
-        if let Some(disk) = disk_gib {
-            args.push(format!("--disk={}GiB", disk));
+    pub fn edit(name: &str, yaml: &str) -> Result<()> {
+        let lima_dir = Self::lima_home().join(name);
+        if !lima_dir.exists() {
+            return Err(LimavelError::InstanceNotFound(name.to_string()).into());
         }
-        args.push("--tty=false".to_string());
-
-        let status = Command::new("limactl")
-            .args(&args)
-            .stdout(Stdio::inherit())
-            .stderr(Stdio::inherit())
-            .status()
-            .map_err(|e| LimavelError::LimactlExec(e.to_string()))?;
-
-        if !status.success() {
-            return Err(LimavelError::LimactlExec("Failed to edit instance".to_string()).into());
-        }
+        let config_path = lima_dir.join("lima.yaml");
+        std::fs::write(&config_path, yaml.as_bytes())
+            .map_err(|e| LimavelError::LimactlExec(format!("Failed to write config: {}", e)))?;
         Ok(())
+    }
+
+    fn lima_home() -> std::path::PathBuf {
+        if let Ok(dir) = std::env::var("LIMA_HOME") {
+            return std::path::PathBuf::from(dir);
+        }
+        let home = std::env::var("HOME").unwrap_or_else(|_| "/".to_string());
+        std::path::PathBuf::from(home).join(".lima")
     }
 
     pub fn delete(name: &str) -> Result<()> {
