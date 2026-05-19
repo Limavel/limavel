@@ -1,5 +1,5 @@
 use anyhow::{Context, Result};
-use colored::Colorize;
+use console::style;
 
 use crate::config::limavel_config::LimavelConfig;
 use crate::error::LimavelError;
@@ -17,9 +17,9 @@ pub fn execute(name: &str) -> Result<()> {
     std::fs::write(&file, TEMPLATE)
         .with_context(|| format!("Failed to write config file: {}", file.display()))?;
 
-    println!("{} {} created successfully!", "✓".green(), file.display());
+    println!("{} {} created successfully!", style("✓").green(), file.display());
     println!("Edit {} to customize your development environment.", file.display());
-    println!("Then run {} to start the VM.", format!("limavel start {}", name).cyan());
+    println!("Then run {} to start the VM.", style(format!("limavel start {}", name)).cyan());
 
     Ok(())
 }

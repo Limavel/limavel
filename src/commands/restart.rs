@@ -1,5 +1,5 @@
 use anyhow::Result;
-use colored::Colorize;
+use console::style;
 
 use crate::config::limavel_config::LimavelConfig;
 use crate::hosts;
@@ -12,9 +12,9 @@ pub fn execute(name: &str) -> Result<()> {
     let instance = config.instance_name();
     LimaClient::ensure_running(instance)?;
 
-    println!("{} Restarting VM '{}'...", "→".cyan(), instance);
+    println!("{} Restarting VM '{}'...", style("→").cyan(), instance);
     LimaClient::restart(instance)?;
-    println!("{} VM '{}' restarted.", "✓".green(), instance);
+    println!("{} VM '{}' restarted.", style("✓").green(), instance);
 
     // Refresh /etc/hosts since IP may change after reboot
     hosts::update_from_config(instance, &config)?;

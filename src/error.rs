@@ -8,6 +8,9 @@ pub enum LimavelError {
     #[error("{0} not found in current directory. Run 'limavel init' first.")]
     ConfigNotFound(String),
 
+    #[error("No provision config files found in current directory. Run 'limavel init' first.")]
+    NoConfigFound,
+
     #[error("lima-vm (limactl) not found. Install it with: brew install lima")]
     LimaNotFound,
 

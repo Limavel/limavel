@@ -1,5 +1,5 @@
 use anyhow::{Context, Result};
-use colored::Colorize;
+use console::style;
 use std::path::Path;
 
 pub fn execute(path: &str) -> Result<()> {
@@ -13,7 +13,7 @@ pub fn execute(path: &str) -> Result<()> {
     std::fs::create_dir_all(&bootstrap_dir)
         .with_context(|| "Failed to create bootstrap directory")?;
 
-    println!("{} Extracting bootstrap files...", "→".cyan());
+    println!("{} Extracting bootstrap files...", style("→").cyan());
     crate::bootstrap::write_all(&bootstrap_dir)
         .with_context(|| "Failed to extract bootstrap files")?;
 
@@ -21,11 +21,11 @@ pub fn execute(path: &str) -> Result<()> {
     std::fs::create_dir_all(&ansible_dir)
         .with_context(|| "Failed to create ansible directory")?;
 
-    println!("{} Extracting ansible files...", "→".cyan());
+    println!("{} Extracting ansible files...", style("→").cyan());
     crate::ansible::playbooks::write_all(&ansible_dir)
         .with_context(|| "Failed to extract ansible files")?;
 
-    println!("{} Published to {}", "✓".green(), target.display());
+    println!("{} Published to {}", style("✓").green(), target.display());
 
     Ok(())
 }

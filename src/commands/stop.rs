@@ -1,5 +1,5 @@
 use anyhow::Result;
-use colored::Colorize;
+use console::style;
 
 use crate::config::limavel_config::LimavelConfig;
 use crate::hosts;
@@ -13,13 +13,13 @@ pub fn execute(name: &str, no_hosts: bool) -> Result<()> {
     LimaClient::ensure_running(instance)?;
 
     if !no_hosts {
-        println!("{} Removing /etc/hosts entries for '{}'...", "→".cyan(), instance);
+        println!("{} Removing /etc/hosts entries for '{}'...", style("→").cyan(), instance);
         hosts::remove(instance)?;
     }
 
-    println!("{} Stopping VM '{}'...", "→".cyan(), instance);
+    println!("{} Stopping VM '{}'...", style("→").cyan(), instance);
     LimaClient::stop(instance)?;
-    println!("{} VM '{}' stopped.", "✓".green(), instance);
+    println!("{} VM '{}' stopped.", style("✓").green(), instance);
 
     Ok(())
 }

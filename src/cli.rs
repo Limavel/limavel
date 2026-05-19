@@ -26,63 +26,54 @@ pub enum Commands {
     },
     /// Start the development VM (creates it if needed)
     Start {
-        /// Instance name (reads <name>.yaml, defaults to "limavel")
-        #[arg(default_value = "limavel")]
-        name: String,
+        /// Instance name (reads <name>.yaml, auto-detected if omitted)
+        name: Option<String>,
         /// Do not update /etc/hosts with site domains
         #[arg(long)]
         no_hosts: bool,
     },
     /// Stop the development VM
     Stop {
-        /// Instance name (reads <name>.yaml, defaults to "limavel")
-        #[arg(default_value = "limavel")]
-        name: String,
+        /// Instance name (reads <name>.yaml, auto-detected if omitted)
+        name: Option<String>,
         /// Do not remove /etc/hosts entries
         #[arg(long)]
         no_hosts: bool,
     },
     /// Restart the development VM
     Restart {
-        /// Instance name (reads <name>.yaml, defaults to "limavel")
-        #[arg(default_value = "limavel")]
-        name: String,
+        /// Instance name (reads <name>.yaml, auto-detected if omitted)
+        name: Option<String>,
     },
     /// Re-provision the development VM
     Provision {
-        /// Instance name (reads <name>.yaml, defaults to "limavel")
-        #[arg(default_value = "limavel")]
-        name: String,
+        /// Instance name (reads <name>.yaml, auto-detected if omitted)
+        name: Option<String>,
     },
     /// SSH into the development VM
     Ssh {
-        /// Instance name (reads <name>.yaml, defaults to "limavel")
-        #[arg(default_value = "limavel")]
-        name: String,
+        /// Instance name (reads <name>.yaml, auto-detected if omitted)
+        name: Option<String>,
     },
     /// Show SSH connection details for the VM
     SshDetails {
-        /// Instance name (reads <name>.yaml, defaults to "limavel")
-        #[arg(default_value = "limavel")]
-        name: String,
+        /// Instance name (reads <name>.yaml, auto-detected if omitted)
+        name: Option<String>,
     },
     /// Show the VM instance status
     Status {
-        /// Instance name (reads <name>.yaml, defaults to "limavel")
-        #[arg(default_value = "limavel")]
-        name: String,
+        /// Instance name (reads <name>.yaml, auto-detected if omitted)
+        name: Option<String>,
     },
     /// Edit VM resources (memory, cpus) from config
     Edit {
-        /// Instance name (reads <name>.yaml, defaults to "limavel")
-        #[arg(default_value = "limavel")]
-        name: String,
+        /// Instance name (reads <name>.yaml, auto-detected if omitted)
+        name: Option<String>,
     },
     /// Destroy the VM instance
     Destroy {
-        /// Instance name (reads <name>.yaml, defaults to "limavel")
-        #[arg(default_value = "limavel")]
-        name: String,
+        /// Instance name (reads <name>.yaml, auto-detected if omitted)
+        name: Option<String>,
     },
     /// Publish embedded bootstrap and ansible directories to the filesystem
     Publish {
