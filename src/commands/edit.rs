@@ -1,5 +1,5 @@
 use anyhow::Result;
-use colored::Colorize;
+use console::style;
 
 use crate::config::lima_config::LimaConfig;
 use crate::config::limavel_config::LimavelConfig;
@@ -18,7 +18,7 @@ pub fn execute(name: &str) -> Result<()> {
 
     let was_running = LimaClient::instance_status(instance)? == "Running";
     if was_running {
-        println!("{} Stopping VM '{}' to apply changes...", "→".cyan(), instance);
+        println!("{} Stopping VM '{}' to apply changes...", style("→").cyan(), instance);
         LimaClient::stop(instance)?;
     }
 
@@ -26,14 +26,14 @@ pub fn execute(name: &str) -> Result<()> {
     let lima_config = LimaConfig::from_config(&config, &ssh_pubkey)?;
     let yaml = lima_config.to_yaml()?;
 
-    println!("{} Applying changes...", "→".cyan());
+    println!("{} Applying changes...", style("→").cyan());
     LimaClient::edit(instance, &yaml)?;
-    println!("{} Changes applied.", "✓".green());
+    println!("{} Changes applied.", style("✓").green());
 
     if was_running {
-        println!("{} Starting VM '{}'...", "→".cyan(), instance);
+        println!("{} Starting VM '{}'...", style("→").cyan(), instance);
         LimaClient::start(instance)?;
-        println!("{} VM '{}' started.", "✓".green(), instance);
+        println!("{} VM '{}' started.", style("✓").green(), instance);
     }
 
     Ok(())

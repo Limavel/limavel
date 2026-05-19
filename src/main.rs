@@ -9,27 +9,46 @@ mod lima;
 
 use clap::Parser;
 use cli::{Cli, Commands};
-use colored::Colorize;
+use console::style;
+use config::limavel_config::LimavelConfig;
 
 fn main() {
     let cli = Cli::parse();
 
     let result = match cli.command {
         Commands::Init { name } => commands::init::execute(&name),
-        Commands::Start { name, no_hosts } => commands::start::execute(&name, no_hosts),
-        Commands::Stop { name, no_hosts } => commands::stop::execute(&name, no_hosts),
-        Commands::Restart { name } => commands::restart::execute(&name),
-        Commands::Provision { name } => commands::provision::execute(&name),
-        Commands::Ssh { name } => commands::ssh::execute(&name),
-        Commands::SshDetails { name } => commands::ssh::details(&name),
-        Commands::Status { name } => commands::status::execute(&name),
-        Commands::Edit { name } => commands::edit::execute(&name),
-        Commands::Destroy { name } => commands::destroy::execute(&name),
+        Commands::Start { name, no_hosts } => {
+            LimavelConfig::resolve(name).and_then(|n| commands::start::execute(&n, no_hosts))
+        }
+        Commands::Stop { name, no_hosts } => {
+            LimavelConfig::resolve(name).and_then(|n| commands::stop::execute(&n, no_hosts))
+        }
+        Commands::Restart { name } => {
+            LimavelConfig::resolve(name).and_then(|n| commands::restart::execute(&n))
+        }
+        Commands::Provision { name } => {
+            LimavelConfig::resolve(name).and_then(|n| commands::provision::execute(&n))
+        }
+        Commands::Ssh { name } => {
+            LimavelConfig::resolve(name).and_then(|n| commands::ssh::execute(&n))
+        }
+        Commands::SshDetails { name } => {
+            LimavelConfig::resolve(name).and_then(|n| commands::ssh::details(&n))
+        }
+        Commands::Status { name } => {
+            LimavelConfig::resolve(name).and_then(|n| commands::status::execute(&n))
+        }
+        Commands::Edit { name } => {
+            LimavelConfig::resolve(name).and_then(|n| commands::edit::execute(&n))
+        }
+        Commands::Destroy { name } => {
+            LimavelConfig::resolve(name).and_then(|n| commands::destroy::execute(&n))
+        }
         Commands::Publish { path } => commands::publish::execute(&path),
     };
 
     if let Err(e) = result {
-        eprintln!("{} {}", "Error:".red().bold(), e);
+        eprintln!("{} {}", style("Error:").red().bold(), e);
         std::process::exit(1);
     }
 }

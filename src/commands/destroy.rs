@@ -1,6 +1,6 @@
 use anyhow::Result;
-use colored::Colorize;
-use std::io::{self, Write};
+use console::style;
+use dialoguer::Confirm;
 
 use crate::config::limavel_config::LimavelConfig;
 use crate::hosts;
@@ -13,40 +13,39 @@ pub fn execute(name: &str) -> Result<()> {
     let instance = config.instance_name();
 
     if !LimaClient::instance_exists(instance)? {
-        println!("{} No VM instance '{}' found.", "ℹ".cyan(), instance);
+        println!("{} No VM instance '{}' found.", style("ℹ").cyan(), instance);
         return Ok(());
     }
 
     // Confirm destruction
-    print!(
-        "{} Are you sure you want to destroy VM '{}'? This cannot be undone. [y/N] ",
-        "⚠".yellow(),
-        instance
-    );
-    io::stdout().flush()?;
+    let confirmed = Confirm::new()
+        .with_prompt(format!(
+            "{} Are you sure you want to destroy VM '{}'? This cannot be undone",
+            style("⚠").yellow(),
+            instance
+        ))
+        .default(false)
+        .interact()?;
 
-    let mut input = String::new();
-    io::stdin().read_line(&mut input)?;
-
-    if !input.trim().eq_ignore_ascii_case("y") {
+    if !confirmed {
         println!("Aborted.");
         return Ok(());
     }
 
     // Clean up /etc/hosts entries
-    println!("{} Removing /etc/hosts entries for '{}'...", "→".cyan(), instance);
+    println!("{} Removing /etc/hosts entries for '{}'...", style("→").cyan(), instance);
     hosts::remove(instance)?;
 
     // Stop if running
     let status = LimaClient::instance_status(instance)?;
     if status == "Running" {
-        println!("{} Stopping VM '{}'...", "→".cyan(), instance);
+        println!("{} Stopping VM '{}'...", style("→").cyan(), instance);
         LimaClient::stop(instance)?;
     }
 
-    println!("{} Destroying VM '{}'...", "→".cyan(), instance);
+    println!("{} Destroying VM '{}'...", style("→").cyan(), instance);
     LimaClient::delete(instance)?;
 
-    println!("{} VM '{}' destroyed.", "✓".green(), instance);
+    println!("{} VM '{}' destroyed.", style("✓").green(), instance);
     Ok(())
 }

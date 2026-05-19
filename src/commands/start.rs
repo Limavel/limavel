@@ -1,5 +1,5 @@
 use anyhow::Result;
-use colored::Colorize;
+use console::style;
 use std::io::Write;
 use tempfile::NamedTempFile;
 
@@ -29,14 +29,14 @@ fn apply_resource_changes(instance: &str, config: &LimavelConfig) -> Result<()> 
         if disk_changed {
             changes.push(format!("disk: {}GiB -> {}GiB", current_disk, config.disk));
         }
-        println!("{} Applying resource changes: {}", "→".cyan(), changes.join(", "));
+        println!("{} Applying resource changes: {}", style("→").cyan(), changes.join(", "));
 
         let ssh_pubkey = config.read_ssh_pubkey()?;
         let lima_config = LimaConfig::from_config(config, &ssh_pubkey)?;
         let yaml = lima_config.to_yaml()?;
         LimaClient::edit(instance, &yaml)?;
 
-        println!("{} Resource changes applied.", "✓".green());
+        println!("{} Resource changes applied.", style("✓").green());
     }
 
     Ok(())
@@ -52,15 +52,15 @@ pub fn execute(name: &str, no_hosts: bool) -> Result<()> {
     if LimaClient::instance_exists(instance)? {
         let status = LimaClient::instance_status(instance)?;
         if status == "Running" {
-            println!("{} VM '{}' is already running.", "ℹ".cyan(), instance);
+            println!("{} VM '{}' is already running.", style("ℹ").cyan(), instance);
             return Ok(());
         }
 
         apply_resource_changes(instance, &config)?;
 
-        println!("{} Starting VM '{}'...", "→".cyan(), instance);
+        println!("{} Starting VM '{}'...", style("→").cyan(), instance);
         LimaClient::start(instance)?;
-        println!("{} VM '{}' started.", "✓".green(), instance);
+        println!("{} VM '{}' started.", style("✓").green(), instance);
         if !no_hosts {
             hosts::update_from_config(instance, &config)?;
         }
@@ -68,7 +68,7 @@ pub fn execute(name: &str, no_hosts: bool) -> Result<()> {
     }
 
     // Create new instance
-    println!("{} Creating VM '{}'...", "→".cyan(), instance);
+    println!("{} Creating VM '{}'...", style("→").cyan(), instance);
 
     let ssh_pubkey = config.read_ssh_pubkey()?;
     let lima_config = LimaConfig::from_config(&config, &ssh_pubkey)?;
@@ -79,22 +79,22 @@ pub fn execute(name: &str, no_hosts: bool) -> Result<()> {
     tmpfile.flush()?;
 
     LimaClient::create(instance, tmpfile.path().to_str().unwrap())?;
-    println!("{} VM '{}' created.", "✓".green(), instance);
+    println!("{} VM '{}' created.", style("✓").green(), instance);
 
-    println!("{} Starting VM '{}'...", "→".cyan(), instance);
+    println!("{} Starting VM '{}'...", style("→").cyan(), instance);
     LimaClient::start(instance)?;
-    println!("{} VM '{}' started.", "✓".green(), instance);
+    println!("{} VM '{}' started.", style("✓").green(), instance);
 
     // Run initial provisioning
-    println!("{} Running initial provisioning...", "→".cyan());
+    println!("{} Running initial provisioning...", style("→").cyan());
     runner::provision(instance, &config)?;
-    println!("{} Provisioning complete!", "✓".green());
+    println!("{} Provisioning complete!", style("✓").green());
 
     if !no_hosts {
         hosts::update_from_config(instance, &config)?;
     }
 
-    println!("Type \"{}\" for accessing to your development environment", "limavel ssh".green());
+    println!("Type \"{}\" for accessing to your development environment", style("limavel ssh").green());
 
     Ok(())
 }

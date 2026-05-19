@@ -1,4 +1,5 @@
 use anyhow::{Context, Result};
+use dialoguer::Select;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs;
@@ -91,6 +92,53 @@ impl LimavelConfig {
             return PathBuf::from(name);
         }
         PathBuf::from(format!("{}.yaml", name))
+    }
+
+    /// Scan the current directory for valid limavel config files.
+    /// Returns filenames (without extension) of files that parse as LimavelConfig.
+    pub fn discover() -> Vec<String> {
+        let Ok(entries) = fs::read_dir(".") else {
+            return Vec::new();
+        };
+
+        let mut configs: Vec<String> = entries
+            .filter_map(|e| e.ok())
+            .filter_map(|entry| {
+                let path = entry.path();
+                let ext = path.extension()?.to_str()?;
+                if ext != "yaml" && ext != "yml" {
+                    return None;
+                }
+                let content = fs::read_to_string(&path).ok()?;
+                serde_yml::from_str::<LimavelConfig>(&content).ok()?;
+                Some(path.file_stem()?.to_str()?.to_string())
+            })
+            .collect();
+
+        configs.sort();
+        configs
+    }
+
+    /// Resolve the config name: use the explicit name if given, otherwise auto-detect.
+    pub fn resolve(name: Option<String>) -> Result<String> {
+        if let Some(n) = name {
+            return Ok(n);
+        }
+
+        let configs = Self::discover();
+
+        match configs.len() {
+            0 => Err(LimavelError::NoConfigFound.into()),
+            1 => Ok(configs.into_iter().next().unwrap()),
+            _ => {
+                let selection = Select::new()
+                    .with_prompt("Multiple config files found. Select one")
+                    .items(&configs)
+                    .default(0)
+                    .interact()?;
+                Ok(configs[selection].clone())
+            }
+        }
     }
 
     pub fn exists(name: &str) -> bool {

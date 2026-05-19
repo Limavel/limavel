@@ -103,7 +103,7 @@ pub fn update_from_config(
     instance: &str,
     config: &crate::config::limavel_config::LimavelConfig,
 ) -> Result<()> {
-    use colored::Colorize;
+    use console::style;
 
     let domains: Vec<String> = config.sites.iter().map(|s| s.map.clone()).collect();
     if domains.is_empty() {
@@ -111,8 +111,8 @@ pub fn update_from_config(
     }
 
     let ip = crate::lima::client::LimaClient::guest_ip(instance)?;
-    println!("{} Updating /etc/hosts ({})...", "→".cyan(), ip);
+    println!("{} Updating /etc/hosts ({})...", style("→").cyan(), ip);
     update(instance, &ip, &domains)?;
-    println!("{} /etc/hosts updated.", "✓".green());
+    println!("{} /etc/hosts updated.", style("✓").green());
     Ok(())
 }

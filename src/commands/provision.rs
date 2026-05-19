@@ -1,5 +1,5 @@
 use anyhow::Result;
-use colored::Colorize;
+use console::style;
 
 use crate::config::limavel_config::LimavelConfig;
 use crate::hosts;
@@ -14,9 +14,9 @@ pub fn execute(name: &str) -> Result<()> {
     let instance = config.instance_name();
     LimaClient::ensure_running(instance)?;
 
-    println!("{} Running provisioning...", "→".cyan());
+    println!("{} Running provisioning...", style("→").cyan());
     runner::provision(instance, &config)?;
-    println!("{} Provisioning complete!", "✓".green());
+    println!("{} Provisioning complete!", style("✓").green());
 
     // Refresh /etc/hosts in case sites changed
     hosts::update_from_config(instance, &config)?;
