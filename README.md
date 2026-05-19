@@ -1,6 +1,6 @@
 # Limavel 🍋‍🟩
 
-A tool for creating and provisioning virtualized environments for Laravel development on macOS.
+A tool for creating and provisioning virtualized development environments for Laravel on macOS.
 
 
 This tool may serve also as [Laravel Homestead](https://laravel.com/docs/13.x/homestead) replacement.
