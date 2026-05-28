@@ -52,6 +52,7 @@ To publish the OS bootstrap and Ansible playbook files in your filesystem, you c
 See the following provisions:
 - [Debian Trixie](https://github.com/Limavel/provision-debian-13-4) (Default used by Limavel)
 - [Ubuntu Server Noble](https://github.com/Limavel/provision-ubuntu-24-04)
+- [Rocky 10](https://github.com/Limavel/provision-rocky-10) (Under testing)
 
 The provisions located into the limavel project are oriented to Laravel development; however, you are free to create your own provisions for different purposes or/and development stacks.
 
