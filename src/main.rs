@@ -26,8 +26,8 @@ fn main() {
         Commands::Restart { name } => {
             LimavelConfig::resolve(name).and_then(|n| commands::restart::execute(&n))
         }
-        Commands::Provision { name } => {
-            LimavelConfig::resolve(name).and_then(|n| commands::provision::execute(&n))
+        Commands::Provision { name, no_edit } => {
+            LimavelConfig::resolve(name).and_then(|n| commands::provision::execute(&n, no_edit))
         }
         Commands::Ssh { name } => {
             LimavelConfig::resolve(name).and_then(|n| commands::ssh::execute(&n))

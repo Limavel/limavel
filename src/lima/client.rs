@@ -123,6 +123,29 @@ impl LimaClient {
             .ok_or_else(|| anyhow::anyhow!("Could not determine disk size for instance '{}'", name))
     }
 
+    /// Read the current mount entries from the instance's lima.yaml.
+    /// Returns a vec of (location, mount_point) tuples.
+    pub fn instance_mounts(name: &str) -> Result<Vec<(String, Option<String>)>> {
+        let config_path = Self::lima_home().join(name).join("lima.yaml");
+        let content = std::fs::read_to_string(&config_path)
+            .map_err(|e| anyhow::anyhow!("Failed to read lima.yaml: {}", e))?;
+        let doc: serde_json::Value = serde_yml::from_str(&content)?;
+        let mounts = doc
+            .get("mounts")
+            .and_then(|v| v.as_array())
+            .cloned()
+            .unwrap_or_default();
+        let result = mounts
+            .iter()
+            .map(|m| {
+                let location = m.get("location").and_then(|v| v.as_str()).unwrap_or("").to_string();
+                let mount_point = m.get("mountPoint").and_then(|v| v.as_str()).map(|s| s.to_string());
+                (location, mount_point)
+            })
+            .collect();
+        Ok(result)
+    }
+
     pub fn edit(name: &str, yaml: &str) -> Result<()> {
         let lima_dir = Self::lima_home().join(name);
         if !lima_dir.exists() {

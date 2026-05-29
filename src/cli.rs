@@ -49,6 +49,9 @@ pub enum Commands {
     Provision {
         /// Instance name (reads <name>.yaml, auto-detected if omitted)
         name: Option<String>,
+        /// Do not apply VM resource changes before provisioning
+        #[arg(long)]
+        no_edit: bool,
     },
     /// SSH into the development VM
     Ssh {

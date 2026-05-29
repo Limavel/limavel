@@ -39,7 +39,7 @@ After the first start, Limavel will create a new virtual machine and run the pro
 
 ### Provisioning
 
-You can run ```limavel provision``` for applying changes to the virtual machine related to software installation and configurations.
+You can run ```limavel provision``` for applying changes to the virtual machine and software installation or/and configurations.
 
 The provisioning process is based on Ansible playbooks.
 
