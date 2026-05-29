@@ -110,7 +110,15 @@ impl LimavelConfig {
                     return None;
                 }
                 let content = fs::read_to_string(&path).ok()?;
-                serde_yml::from_str::<LimavelConfig>(&content).ok()?;
+                if let Err(e) = serde_yml::from_str::<LimavelConfig>(&content) {
+                    eprintln!(
+                        "{} Skipping {}: {}",
+                        console::style("⚠").yellow(),
+                        path.display(),
+                        e
+                    );
+                    return None;
+                }
                 Some(path.file_stem()?.to_str()?.to_string())
             })
             .collect();
