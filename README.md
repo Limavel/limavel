@@ -107,3 +107,18 @@ Limavel will take care of the virtual machine management, provisioning, and host
                              │  └─────────────────┘  │
                              └───────────────────────┘
 ```
+
+
+## FAQ
+
+- How can I access to the host from any guest machine?
+The host `host.lima.internal` points to the host ip.
+
+- Can I run multiple virtual machines at the same time?
+Yes.
+
+- Why sometimes the guest IP changes?
+The guest ip is assigned by the virtualization framework, and it can change everytime that a virtual machine boots, but it's possible to get the guest ip running the `limavel status` command.
+
+- Can I use Limavel with non-Laravel projects?
+Yes, despite that Limavel is oriented to Laravel development, you can use it with any project. You can customize the Ansible playbooks to install the software you need.
