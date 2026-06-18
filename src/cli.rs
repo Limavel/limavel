@@ -58,6 +58,14 @@ pub enum Commands {
         /// Instance name (reads <name>.yaml, auto-detected if omitted)
         name: Option<String>,
     },
+    /// Execute a command inside the VM without interactive login
+    Exec {
+        /// Instance name (reads <name>.yaml, auto-detected if omitted)
+        name: Option<String>,
+        /// Command to execute inside the VM
+        #[arg(short)]
+        c: String,
+    },
     /// Show SSH connection details for the VM
     SshDetails {
         /// Instance name (reads <name>.yaml, auto-detected if omitted)

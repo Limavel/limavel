@@ -1,5 +1,6 @@
 pub mod destroy;
 pub mod edit;
+pub mod exec;
 pub mod init;
 pub mod provision;
 pub mod publish;

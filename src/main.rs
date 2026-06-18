@@ -32,6 +32,9 @@ fn main() {
         Commands::Ssh { name } => {
             LimavelConfig::resolve(name).and_then(|n| commands::ssh::execute(&n))
         }
+        Commands::Exec { name, c } => {
+            LimavelConfig::resolve(name).and_then(|n| commands::exec::execute(&n, &c))
+        }
         Commands::SshDetails { name } => {
             LimavelConfig::resolve(name).and_then(|n| commands::ssh::details(&n))
         }
