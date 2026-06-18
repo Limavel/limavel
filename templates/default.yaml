@@ -2,7 +2,7 @@
 # ======================
 
 # Instance name (used as Lima VM identifier)
-name: limavel
+name: {{ name }}
 
 # VM Resources
 memory: 2048

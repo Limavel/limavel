@@ -14,7 +14,7 @@ pub fn execute(name: &str) -> Result<()> {
     }
 
     // Write a template file first
-    std::fs::write(&file, TEMPLATE)
+    std::fs::write(&file, TEMPLATE.replace("{{ name }}", name))
         .with_context(|| format!("Failed to write config file: {}", file.display()))?;
 
     println!("{} {} created successfully!", style("✓").green(), file.display());
