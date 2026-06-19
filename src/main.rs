@@ -7,7 +7,7 @@ mod error;
 mod hosts;
 mod lima;
 
-use clap::Parser;
+use clap::{CommandFactory, Parser};
 use cli::{Cli, Commands};
 use console::style;
 use config::limavel_config::LimavelConfig;
@@ -48,6 +48,10 @@ fn main() {
             LimavelConfig::resolve(name).and_then(|n| commands::destroy::execute(&n))
         }
         Commands::Publish { path } => commands::publish::execute(&path),
+        Commands::Completions { shell } => {
+            shell.generate(&mut Cli::command(), &mut std::io::stdout());
+            Ok(())
+        }
     };
 
     if let Err(e) = result {

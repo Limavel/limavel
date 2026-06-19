@@ -92,4 +92,10 @@ pub enum Commands {
         #[arg(default_value = ".")]
         path: String,
     },
+    /// Generate shell completions
+    Completions {
+        /// The shell to generate the completions for
+        #[arg(value_enum)]
+        shell: clap_complete_command::Shell,
+    },
 }
