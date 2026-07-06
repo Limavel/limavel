@@ -166,3 +166,73 @@ fn generate_bootstrap_script(ssh_pubkey: &str, custom_path: &Option<String>) -> 
 
     Ok(template.replace("{ssh_pubkey}", ssh_pubkey))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const PUBKEY: &str = "ssh-ed25519 AAAATESTKEY user@host";
+
+    fn limavel_fixture() -> LimavelConfig {
+        let yaml = include_str!("../../templates/default.yaml").replace("{{ name }}", "testbox");
+        serde_yml::from_str(&yaml).unwrap()
+    }
+
+    #[test]
+    fn from_config_maps_resources() {
+        let lima = LimaConfig::from_config(&limavel_fixture(), PUBKEY).unwrap();
+        assert_eq!(lima.cpus, 2);
+        assert_eq!(lima.memory, "2048MiB");
+        assert_eq!(lima.disk, "50GiB");
+        assert_eq!(lima.arch, "aarch64");
+        assert_eq!(lima.vm_type, "vz");
+        assert_eq!(lima.mount_type, "virtiofs");
+    }
+
+    #[test]
+    fn rosetta_is_only_enabled_for_non_arm() {
+        let mut config = limavel_fixture();
+        assert!(!LimaConfig::from_config(&config, PUBKEY).unwrap().rosetta.enabled);
+        config.arch = "x86_64".to_string();
+        assert!(LimaConfig::from_config(&config, PUBKEY).unwrap().rosetta.enabled);
+    }
+
+    #[test]
+    fn mounts_include_folders_and_tmp_lima() {
+        let lima = LimaConfig::from_config(&limavel_fixture(), PUBKEY).unwrap();
+        assert_eq!(lima.mounts.len(), 2);
+        assert!(lima.mounts[0].location.ends_with("/myproject"));
+        assert!(!lima.mounts[0].location.starts_with('~'), "tilde should be expanded");
+        assert_eq!(lima.mounts[0].mount_point.as_deref(), Some("/home/limavel/myproject"));
+        let tmp = lima.mounts.last().unwrap();
+        assert_eq!(tmp.location, "/tmp/lima");
+        assert!(tmp.mount_point.is_none());
+    }
+
+    #[test]
+    fn port_forwards_map_send_to_host_and_to_to_guest() {
+        let lima = LimaConfig::from_config(&limavel_fixture(), PUBKEY).unwrap();
+        assert_eq!(lima.port_forwards[0].host_port, 33060);
+        assert_eq!(lima.port_forwards[0].guest_port, 3306);
+    }
+
+    #[test]
+    fn bootstrap_script_substitutes_ssh_pubkey() {
+        let script = generate_bootstrap_script(PUBKEY, &None).unwrap();
+        assert!(script.contains(PUBKEY));
+        assert!(!script.contains("{ssh_pubkey}"));
+    }
+
+    #[test]
+    fn to_yaml_uses_lima_field_names() {
+        let yaml = LimaConfig::from_config(&limavel_fixture(), PUBKEY)
+            .unwrap()
+            .to_yaml()
+            .unwrap();
+        assert!(yaml.contains("vmType: vz"));
+        assert!(yaml.contains("mountPoint: /home/limavel/myproject"));
+        assert!(yaml.contains("portForwards:"));
+        assert!(yaml.contains("vzNAT: true"));
+        assert!(yaml.contains("loadDotSSHPubKeys: true"));
+    }
+}

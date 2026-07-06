@@ -33,7 +33,6 @@ pub fn execute(name: &str) -> Result<()> {
     }
 
     // Clean up /etc/hosts entries
-    println!("{} Removing /etc/hosts entries for '{}'...", style("→").cyan(), instance);
     hosts::remove(instance)?;
 
     // Stop if running

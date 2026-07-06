@@ -81,6 +81,20 @@ fn default_disk() -> u32 {
     50
 }
 
+/// Heuristic: a YAML file is considered a limavel config attempt if it has
+/// any of the limavel-specific top-level keys.
+fn looks_like_limavel_config(content: &str) -> bool {
+    let Ok(value) = serde_yml::from_str::<serde_yml::Value>(content) else {
+        return false;
+    };
+    let Some(map) = value.as_mapping() else {
+        return false;
+    };
+    ["sites", "folders", "authorize"]
+        .iter()
+        .any(|key| map.contains_key(serde_yml::Value::String(key.to_string())))
+}
+
 fn default_nodejs() -> String {
     "24".to_string()
 }
@@ -111,12 +125,17 @@ impl LimavelConfig {
                 }
                 let content = fs::read_to_string(&path).ok()?;
                 if let Err(e) = serde_yml::from_str::<LimavelConfig>(&content) {
-                    eprintln!(
-                        "{} Skipping {}: {}",
-                        console::style("⚠").yellow(),
-                        path.display(),
-                        e
-                    );
+                    // Only warn about files that look like limavel configs;
+                    // unrelated YAML files (docker-compose.yml, etc.) are
+                    // skipped silently.
+                    if looks_like_limavel_config(&content) {
+                        eprintln!(
+                            "{} Skipping {}: {}",
+                            console::style("⚠").yellow(),
+                            path.display(),
+                            e
+                        );
+                    }
                     return None;
                 }
                 Some(path.file_stem()?.to_str()?.to_string())
@@ -212,5 +231,107 @@ impl LimavelConfig {
         versions.sort();
         versions.dedup();
         versions
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn fixture() -> LimavelConfig {
+        let yaml = include_str!("../../templates/default.yaml").replace("{{ name }}", "testbox");
+        serde_yml::from_str(&yaml).unwrap()
+    }
+
+    #[test]
+    fn default_template_parses() {
+        let config = fixture();
+        assert_eq!(config.name, "testbox");
+        assert_eq!(config.memory, 2048);
+        assert_eq!(config.cpus, 2);
+        assert_eq!(config.disk, 50);
+        assert_eq!(config.arch, "aarch64");
+        assert_eq!(config.database.db_type, "mariadb");
+        assert_eq!(config.databases, vec!["limavel"]);
+        assert_eq!(config.sites.len(), 1);
+        assert_eq!(config.sites[0].php, "8.3");
+        assert!(config.features.ohmyzsh);
+        assert!(!config.features.webdriver);
+        assert_eq!(config.ports.len(), 2);
+        assert_eq!(config.ports[0].send, 33060);
+        assert_eq!(config.ports[0].to, 3306);
+    }
+
+    #[test]
+    fn missing_optional_fields_use_defaults() {
+        let yaml = r#"
+name: mini
+memory: 1024
+cpus: 1
+image: img
+arch: aarch64
+authorize: ~/.ssh/id_rsa.pub
+keys: []
+folders: []
+sites: []
+databases: []
+database:
+  type: mariadb
+  version: "11"
+  password: secret
+features: {}
+ports: []
+"#;
+        let config: LimavelConfig = serde_yml::from_str(yaml).unwrap();
+        assert_eq!(config.disk, 50);
+        assert_eq!(config.nodejs, "24");
+        assert!(config.bootstrap.is_none());
+        assert!(config.playbooks.is_none());
+        assert!(config.features.extra.is_empty());
+    }
+
+    #[test]
+    fn custom_feature_flags_land_in_extra() {
+        let mut config = fixture();
+        let yaml = r#"
+ohmyzsh: true
+worker_count: 4
+"#;
+        config.features = serde_yml::from_str(yaml).unwrap();
+        assert!(config.features.ohmyzsh);
+        assert_eq!(
+            config.features.extra.get("worker_count").and_then(|v| v.as_u64()),
+            Some(4)
+        );
+    }
+
+    #[test]
+    fn config_path_appends_yaml_extension() {
+        assert_eq!(LimavelConfig::config_path("dev"), PathBuf::from("dev.yaml"));
+        assert_eq!(LimavelConfig::config_path("dev.yaml"), PathBuf::from("dev.yaml"));
+        assert_eq!(LimavelConfig::config_path("dev.yml"), PathBuf::from("dev.yml"));
+    }
+
+    #[test]
+    fn php_versions_are_sorted_and_deduped() {
+        let mut config = fixture();
+        let site = config.sites[0].clone();
+        config.sites.push(SiteMap { php: "8.2".into(), ..site.clone() });
+        config.sites.push(SiteMap { php: "8.3".into(), ..site });
+        assert_eq!(config.php_versions(), vec!["8.2", "8.3"]);
+    }
+
+    #[test]
+    fn limavel_like_yaml_is_recognized() {
+        assert!(looks_like_limavel_config("name: dev\nsites: []\n"));
+        assert!(looks_like_limavel_config("folders:\n  - map: ~/x\n    to: /y\n"));
+        assert!(looks_like_limavel_config("authorize: ~/.ssh/id_rsa.pub\n"));
+    }
+
+    #[test]
+    fn unrelated_yaml_is_not_recognized() {
+        assert!(!looks_like_limavel_config("services:\n  app:\n    image: nginx\n"));
+        assert!(!looks_like_limavel_config("- just\n- a\n- list\n"));
+        assert!(!looks_like_limavel_config("not: [valid"));
     }
 }
