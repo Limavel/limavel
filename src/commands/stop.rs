@@ -13,7 +13,6 @@ pub fn execute(name: &str, no_hosts: bool) -> Result<()> {
     LimaClient::ensure_running(instance)?;
 
     if !no_hosts {
-        println!("{} Removing /etc/hosts entries for '{}'...", style("→").cyan(), instance);
         hosts::remove(instance)?;
     }
 

@@ -157,7 +157,7 @@ impl LimaClient {
         Ok(())
     }
 
-    fn lima_home() -> std::path::PathBuf {
+    pub fn lima_home() -> std::path::PathBuf {
         if let Ok(dir) = std::env::var("LIMA_HOME") {
             return std::path::PathBuf::from(dir);
         }

@@ -33,11 +33,10 @@ pub fn details(name: &str) -> Result<()> {
     let instance = config.instance_name();
     LimaClient::ensure_running(instance)?;
 
-    let home = std::env::var("HOME").map_err(|_| anyhow::anyhow!("HOME not set"))?;
-    let ssh_config_path = format!("{}/.lima/{}/ssh.config", home, instance);
+    let ssh_config_path = LimaClient::lima_home().join(instance).join("ssh.config");
 
     let content = std::fs::read_to_string(&ssh_config_path)
-        .map_err(|_| anyhow::anyhow!("SSH config not found at {}", ssh_config_path))?;
+        .map_err(|_| anyhow::anyhow!("SSH config not found at {}", ssh_config_path.display()))?;
 
     let mut user = None;
     let mut hostname = None;
@@ -86,7 +85,7 @@ pub fn details(name: &str) -> Result<()> {
     println!("    or");
     println!(
         "  ssh -F {} {}",
-        ssh_config_path, instance
+        ssh_config_path.display(), instance
     );
     println!();
     println!("No password is required (certificate-based authentication).");
